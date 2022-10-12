@@ -517,6 +517,8 @@ pub enum RelocModel {
 }
 
 /// LLVMRustCodeModel
+/// NOTE LLVM-side opt enum
+
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub enum CodeModel {

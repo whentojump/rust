@@ -341,6 +341,8 @@ impl ToJson for RelocModel {
     }
 }
 
+// NOTE Rust-side option enum
+
 #[derive(Clone, Copy, PartialEq, Hash, Debug)]
 pub enum CodeModel {
     Tiny,

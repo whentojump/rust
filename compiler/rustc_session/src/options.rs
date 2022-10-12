@@ -1091,6 +1091,7 @@ options! {
 
     ar: String = (String::new(), parse_string, [UNTRACKED],
         "this option is deprecated and does nothing"),
+    // NOTE specify codegen options
     #[cfg_attr(not(bootstrap), rustc_lint_opt_deny_field_access("use `Session::code_model` instead of this field"))]
     code_model: Option<CodeModel> = (None, parse_code_model, [TRACKED],
         "choose the code model to use (`rustc --print code-models` for details)"),
@@ -1144,6 +1145,7 @@ options! {
     linker_plugin_lto: LinkerPluginLto = (LinkerPluginLto::Disabled,
         parse_linker_plugin_lto, [TRACKED],
         "generate build artifacts that are compatible with linker-based LTO"),
+    // NOTE specify codegen options
     llvm_args: Vec<String> = (Vec::new(), parse_list, [TRACKED],
         "a list of arguments to pass to LLVM (space separated)"),
     #[cfg_attr(not(bootstrap), rustc_lint_opt_deny_field_access("use `Session::lto` instead of this field"))]
@@ -1169,6 +1171,7 @@ options! {
     #[cfg_attr(not(bootstrap), rustc_lint_opt_deny_field_access("use `Session::panic_strategy` instead of this field"))]
     panic: Option<PanicStrategy> = (None, parse_opt_panic_strategy, [TRACKED],
         "panic strategy to compile crate with"),
+    // NOTE specify codegen options
     passes: Vec<String> = (Vec::new(), parse_list, [TRACKED],
         "a list of extra LLVM passes to run (space separated)"),
     prefer_dynamic: bool = (false, parse_bool, [TRACKED],
