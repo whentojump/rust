@@ -186,6 +186,10 @@ Note that while the `-C instrument-coverage` option is stable, the profile data
 format produced by the resulting instrumentation may change, and may not work
 with coverage tools other than those built and shipped with the compiler.
 
+## iu_playground
+
+TBD
+
 ## link-arg
 
 This flag lets you append a single extra argument to the linker invocation.

@@ -1128,6 +1128,8 @@ options! {
         `=except-unused-generics`
         `=except-unused-functions`
         `=off` (default)"),
+    iu_playground: bool = (false, parse_no_flag, [TRACKED],
+        "(wip) some great switch for inner-unikernel project"),
     link_arg: (/* redirected to link_args */) = ((), parse_string_push, [UNTRACKED],
         "a single extra argument to append to the linker invocation (can be used several times)"),
     link_args: Vec<String> = (Vec::new(), parse_list, [UNTRACKED],
