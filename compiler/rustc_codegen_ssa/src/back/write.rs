@@ -171,6 +171,7 @@ impl ModuleConfig {
         };
 
         ModuleConfig {
+            // NOTE `passes` option (1/3)
             passes: if_regular!(sess.opts.cg.passes.clone(), vec![]),
 
             opt_level: opt_level_and_size,

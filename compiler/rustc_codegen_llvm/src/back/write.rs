@@ -45,6 +45,7 @@ pub fn llvm_note(handler: &rustc_errors::Handler, msg: &str) {
 
 pub fn llvm_err(handler: &rustc_errors::Handler, msg: &str) -> FatalError {
     match llvm::last_error() {
+        // NOTE where the second part of error message comes from
         Some(err) => handler.fatal(&format!("{}: {}", msg, err)),
         None => handler.fatal(msg),
     }
@@ -475,6 +476,7 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
     let llvm_selfprofiler =
         llvm_profiler.as_mut().map(|s| s as *mut _ as *mut c_void).unwrap_or(std::ptr::null_mut());
 
+    // NOTE `passes` option (2/3)
     let extra_passes = if !is_lto { config.passes.join(",") } else { "".to_string() };
 
     let llvm_plugins = config.llvm_plugins.join(",");
@@ -511,6 +513,7 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
         llvm_plugins.as_ptr().cast(),
         llvm_plugins.len(),
     );
+    // NOTE this step fails: unknown pass name
     result.into_result().map_err(|()| llvm_err(diag_handler, "failed to run LLVM passes"))
 }
 
@@ -595,6 +598,7 @@ pub(crate) unsafe fn optimize(
             let mut extra_passes = Vec::new();
             let mut have_name_anon_globals_pass = false;
 
+            // NOTE `passes` option (3/3)
             for pass_name in &config.passes {
                 if pass_name == "lint" {
                     // Linting should also be performed early, directly on the generated IR.
