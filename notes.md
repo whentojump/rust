@@ -94,3 +94,25 @@ options! {
 Differences than the old code:
 
 * No Rust-side enum, `String` instead, parsing function is thus `parse_string` (command-line string to Rust `String`)
+
+## Run passes
+
+`src/librustc/back/link.rs`, `write` mod, `run_passes` function:
+
+1. Map Rust-side (internal) objects to LLVM-side (foreign) objects
+2. Create target machine
+3. Create managers
+4. Add passes
+5. Run managers
+6. Codegen-specific 3, 4 and 5
+
+Code in this file mostly goes to `compiler/rustc_codegen_llvm/src/back/write.rs` now
+
+Aside: how LLVM functions are called
+* Type 1: `LLVMRust*`
+    1. LLVM function `createTargetMachine`
+    2. wrapped by `LLVMRustCreateTargetMachine` (`compiler/rustc_llvm/llvm-wrapper/PassWrapper.cpp`)
+    3. introduced as a foreign function `LLVMRustCreateTargetMachine` into Rust (`compiler/rustc_codegen_llvm/src/llvm/ffi.rs`)
+* Type 2: other `LLVM*`
+    1. LLVM function `LLVMCreatePassManager`
+    2. introduced as a foreign function `LLVMCreatePassManager` into Rust

@@ -160,6 +160,8 @@ fn to_llvm_relocation_model(relocation_model: RelocModel) -> llvm::RelocModel {
     }
 }
 
+// NOTE Rust-side enum => LLVM-side enum
+
 pub(crate) fn to_llvm_code_model(code_model: Option<CodeModel>) -> llvm::CodeModel {
     match code_model {
         Some(CodeModel::Tiny) => llvm::CodeModel::Tiny,
@@ -170,6 +172,10 @@ pub(crate) fn to_llvm_code_model(code_model: Option<CodeModel>) -> llvm::CodeMod
         None => llvm::CodeModel::None,
     }
 }
+
+// NOTE part of the old `run_passes` function
+//      1. Map Rust-side (internal) objects to LLVM-side (foreign) objects
+//      2. Create target machine
 
 pub fn target_machine_factory(
     sess: &Session,
@@ -186,7 +192,7 @@ pub fn target_machine_factory(
     let fdata_sections = ffunction_sections;
     let funique_section_names = !sess.opts.unstable_opts.no_unique_section_names;
 
-    let code_model = to_llvm_code_model(sess.code_model());
+    let code_model = to_llvm_code_model(sess.code_model()); // NOTE used here
 
     let mut singlethread = sess.target.singlethread;
 
@@ -225,7 +231,7 @@ pub fn target_machine_factory(
                 cpu.as_ptr(),
                 features.as_ptr(),
                 abi.as_ptr(),
-                code_model,
+                code_model, // NOTE used here
                 reloc_model,
                 opt_level,
                 use_softfp,
@@ -247,6 +253,8 @@ pub fn target_machine_factory(
         })
     })
 }
+
+// NOTE part of the old `run_passes` function
 
 pub(crate) fn save_temp_bitcode(
     cgcx: &CodegenContext<LlvmCodegenBackend>,
@@ -502,6 +510,11 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
     result.into_result().map_err(|()| llvm_err(diag_handler, "failed to run LLVM passes"))
 }
 
+// NOTE part of the old `run_passes` function
+//      3. Create managers
+//      4. Add passes
+//      5. Run managers
+
 // Unsafe due to LLVM calls.
 pub(crate) unsafe fn optimize(
     cgcx: &CodegenContext<LlvmCodegenBackend>,
@@ -733,6 +746,9 @@ pub(crate) fn link(
     drop(linker);
     Ok(modules.remove(0))
 }
+
+// NOTE part of the old `run_passes` function
+//      6. Codegen-specific 3, 4 and 5
 
 pub(crate) unsafe fn codegen(
     cgcx: &CodegenContext<LlvmCodegenBackend>,
