@@ -39,6 +39,10 @@ use std::slice;
 use std::str;
 use std::sync::Arc;
 
+pub fn llvm_note(handler: &rustc_errors::Handler, msg: &str) {
+    handler.note_without_error(msg);
+}
+
 pub fn llvm_err(handler: &rustc_errors::Handler, msg: &str) -> FatalError {
     match llvm::last_error() {
         Some(err) => handler.fatal(&format!("{}: {}", msg, err)),
