@@ -571,7 +571,7 @@ pub(crate) unsafe fn optimize(
         }
 
         // Create the two optimizing pass managers. These mirror what clang
-        // does, and are by populated by LLVM's default PassManagerBuilder.
+        // does, and are populated by LLVM's default PassManagerBuilder.
         // Each manager has a different set of passes, but they also share
         // some common passes.
         let fpm = llvm::LLVMCreateFunctionPassManagerForModule(llmod);
@@ -729,7 +729,7 @@ pub(crate) fn link(
     mut modules: Vec<ModuleCodegen<ModuleLlvm>>,
 ) -> Result<ModuleCodegen<ModuleLlvm>, FatalError> {
     use super::lto::{Linker, ModuleBuffer};
-    // Sort the modules by name to ensure to ensure deterministic behavior.
+    // Sort the modules by name to ensure deterministic behavior.
     modules.sort_by(|a, b| a.name.cmp(&b.name));
     let (first, elements) =
         modules.split_first().expect("Bug! modules must contain at least one module.");
