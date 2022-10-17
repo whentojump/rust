@@ -39,6 +39,7 @@ use std::slice;
 use std::str;
 use std::sync::Arc;
 
+#[allow(dead_code)]
 pub fn llvm_note(handler: &rustc_errors::Handler, msg: &str) {
     handler.note_without_error(msg);
 }
