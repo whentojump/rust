@@ -116,6 +116,9 @@ pub struct ModuleConfig {
     pub new_llvm_pass_manager: Option<bool>,
     pub emit_lifetime_markers: bool,
     pub llvm_plugins: Vec<String>,
+
+    // Inner unikernel
+    pub iu_playground: bool,
 }
 
 impl ModuleConfig {
@@ -266,6 +269,8 @@ impl ModuleConfig {
             new_llvm_pass_manager: sess.opts.unstable_opts.new_llvm_pass_manager,
             emit_lifetime_markers: sess.emit_lifetime_markers(),
             llvm_plugins: if_regular!(sess.opts.unstable_opts.llvm_plugins.clone(), vec![]),
+
+            iu_playground: sess.opts.cg.iu_playground,
         }
     }
 
