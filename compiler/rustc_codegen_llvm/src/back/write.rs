@@ -613,6 +613,7 @@ pub(crate) unsafe fn optimize(
 
             // NOTE `passes` option (3/3)
             for pass_name in &config.passes {
+                llvm_note(diag_handler, &format!("pass_name {}", pass_name));
                 if pass_name == "lint" {
                     // Linting should also be performed early, directly on the generated IR.
                     llvm::LLVMRustAddPass(fpm, find_pass("lint").unwrap());
