@@ -437,6 +437,9 @@ fn get_pgo_sample_use_path(config: &ModuleConfig) -> Option<CString> {
         .map(|path_buf| CString::new(path_buf.to_string_lossy().as_bytes()).unwrap())
 }
 
+// NOTE this gets called only with the new pass manager
+//      i.e. default or -Z new-llvm-pass-manager=y
+
 pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
     cgcx: &CodegenContext<LlvmCodegenBackend>,
     diag_handler: &Handler,
@@ -445,6 +448,7 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
     opt_level: config::OptLevel,
     opt_stage: llvm::OptStage,
 ) -> Result<(), FatalError> {
+    llvm_note(diag_handler, "Optimize with the new pass manager");
     let unroll_loops =
         opt_level != config::OptLevel::Size && opt_level != config::OptLevel::SizeMin;
     let using_thin_buffers = opt_stage == llvm::OptStage::PreLinkThinLTO || config.bitcode_needed();
@@ -514,7 +518,7 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
         llvm_plugins.as_ptr().cast(),
         llvm_plugins.len(),
     );
-    // NOTE this step fails: unknown pass name
+    // NOTE cannot find the pass
     result.into_result().map_err(|()| llvm_err(diag_handler, "failed to run LLVM passes"))
 }
 
@@ -523,6 +527,9 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
 //      4. Add passes
 //      5. Run managers
 
+// NOTE this gets called only with the old pass manager
+//      i.e. -Z new-llvm-pass-manager=n
+
 // Unsafe due to LLVM calls.
 pub(crate) unsafe fn optimize(
     cgcx: &CodegenContext<LlvmCodegenBackend>,
@@ -530,6 +537,7 @@ pub(crate) unsafe fn optimize(
     module: &ModuleCodegen<ModuleLlvm>,
     config: &ModuleConfig,
 ) -> Result<(), FatalError> {
+    llvm_note(diag_handler, "Optimize with the old pass manager");
     let _timer = cgcx.prof.generic_activity_with_arg("LLVM_module_optimize", &*module.name);
 
     let llmod = module.module_llvm.llmod();
@@ -610,6 +618,7 @@ pub(crate) unsafe fn optimize(
                 if let Some(pass) = find_pass(pass_name) {
                     extra_passes.push(pass);
                 } else {
+                    // NOTE cannot find the pass
                     diag_handler.warn(&format!("unknown pass `{}`, ignoring", pass_name));
                 }
 
