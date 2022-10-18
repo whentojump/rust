@@ -545,6 +545,11 @@ pub fn tune_cpu(sess: &Session) -> Option<&str> {
     Some(handle_native(name))
 }
 
+// NOTE By default we'll use the new LLVM pass manager
+//      Seems the snippet for making this decision changes quite frequently
+//      in recent commits.
+//      Not sure if there's any implication for us.
+
 pub(crate) fn should_use_new_llvm_pass_manager(user_opt: &Option<bool>, target_arch: &str) -> bool {
     // The new pass manager is enabled by default for LLVM >= 13.
     // This matches Clang, which also enables it since Clang 13.
