@@ -448,7 +448,6 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
     opt_level: config::OptLevel,
     opt_stage: llvm::OptStage,
 ) -> Result<(), FatalError> {
-    llvm_note(diag_handler, "Optimize with the new pass manager");
     let unroll_loops =
         opt_level != config::OptLevel::Size && opt_level != config::OptLevel::SizeMin;
     let using_thin_buffers = opt_stage == llvm::OptStage::PreLinkThinLTO || config.bitcode_needed();
@@ -537,7 +536,6 @@ pub(crate) unsafe fn optimize(
     module: &ModuleCodegen<ModuleLlvm>,
     config: &ModuleConfig,
 ) -> Result<(), FatalError> {
-    llvm_note(diag_handler, "Optimize with the old pass manager");
     let _timer = cgcx.prof.generic_activity_with_arg("LLVM_module_optimize", &*module.name);
 
     let llmod = module.module_llvm.llmod();
@@ -565,6 +563,7 @@ pub(crate) unsafe fn optimize(
             &config.new_llvm_pass_manager,
             &cgcx.target_arch,
         ) {
+            llvm_note(diag_handler, "Optimize with the new pass manager");
             let opt_stage = match cgcx.lto {
                 Lto::Fat => llvm::OptStage::PreLinkFatLTO,
                 Lto::Thin | Lto::ThinLocal => llvm::OptStage::PreLinkThinLTO,
@@ -580,6 +579,8 @@ pub(crate) unsafe fn optimize(
                 opt_stage,
             );
         }
+
+        llvm_note(diag_handler, "Optimize with the old pass manager");
 
         if cgcx.prof.llvm_recording_enabled() {
             diag_handler
