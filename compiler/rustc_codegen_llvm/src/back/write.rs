@@ -483,6 +483,8 @@ pub(crate) unsafe fn optimize_with_new_llvm_pass_manager(
     // NOTE `passes` option (2/3)
     let extra_passes = if !is_lto { config.passes.join(",") } else { "".to_string() };
 
+    llvm_note(diag_handler, &format!("extra_passes {}", extra_passes));
+
     let llvm_plugins = config.llvm_plugins.join(",");
 
     // FIXME: NewPM doesn't provide a facility to pass custom InlineParams.
